@@ -1,0 +1,198 @@
+[
+    {
+      "input": "I need a backend developer who is excellent in FastAPI and has built production-grade APIs, preferably async-heavy systems.",
+      "output": {
+        "role": "Backend Developer",
+        "seniority": "Mid to Senior",
+        "primary_stack": ["Python", "FastAPI"],
+        "secondary_stack": ["Async Programming"],
+        "domains": ["Backend Systems", "API Development"],
+        "evaluation_signals": [
+          "FastAPI routers",
+          "dependency injection",
+          "async/await usage",
+          "production-style project structure"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["fastapi", "backend", "api"]
+        }
+      }
+    },
+    {
+      "input": "Looking for a backend engineer strong in Python APIs who has worked deeply with databases and real-world data models.",
+      "output": {
+        "role": "Backend Engineer",
+        "seniority": "Mid",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["SQL", "ORMs"],
+        "domains": ["Backend Systems", "Databases"],
+        "evaluation_signals": [
+          "database models",
+          "ORM usage",
+          "migration scripts",
+          "schema design"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["backend", "database", "api"]
+        }
+      }
+    },
+    {
+      "input": "I want a full-stack developer but with strong backend fundamentals, especially APIs and system design.",
+      "output": {
+        "role": "Full Stack Developer",
+        "seniority": "Mid",
+        "primary_stack": ["JavaScript", "Python"],
+        "secondary_stack": ["APIs"],
+        "domains": ["Full Stack", "Backend Systems"],
+        "evaluation_signals": [
+          "API development",
+          "backend-heavy repositories",
+          "clear separation of frontend and backend"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["backend", "api"]
+        }
+      }
+    },
+    {
+      "input": "Need a backend engineer experienced in distributed systems and scalable architectures, not just CRUD apps.",
+      "output": {
+        "role": "Backend Engineer",
+        "seniority": "Senior",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Distributed Systems"],
+        "domains": ["Distributed Systems", "Scalability"],
+        "evaluation_signals": [
+          "message queues",
+          "background workers",
+          "service-to-service communication",
+          "scaling patterns"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["distributed-systems", "backend"]
+        }
+      }
+    },
+    {
+      "input": "Looking for someone who has built backend infrastructure or internal tools, not consumer-facing apps.",
+      "output": {
+        "role": "Platform Engineer",
+        "seniority": "Senior",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Infrastructure"],
+        "domains": ["Platform Engineering", "Internal Tools"],
+        "evaluation_signals": [
+          "CLI tools",
+          "automation scripts",
+          "infra-related repositories",
+          "non-UI services"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["infrastructure", "automation"]
+        }
+      }
+    },
+    {
+      "input": "I need an engineer who builds ML-backed APIs and deploys models as backend services.",
+      "output": {
+        "role": "ML Backend Engineer",
+        "seniority": "Mid to Senior",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Machine Learning"],
+        "domains": ["ML Systems", "Backend APIs"],
+        "evaluation_signals": [
+          "model serving",
+          "ML inference endpoints",
+          "API wrapping ML logic"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["machine-learning", "api"]
+        }
+      }
+    },
+    {
+      "input": "Looking for a Python developer who writes low-level, performance-sensitive backend code.",
+      "output": {
+        "role": "Systems Engineer",
+        "seniority": "Senior",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Performance Optimization"],
+        "domains": ["Systems Programming"],
+        "evaluation_signals": [
+          "performance tuning",
+          "profiling usage",
+          "memory-conscious code",
+          "non-trivial algorithms"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["systems", "performance"]
+        }
+      }
+    },
+    {
+      "input": "Need a backend engineer who thinks API-first and designs clean, maintainable interfaces.",
+      "output": {
+        "role": "Backend Engineer",
+        "seniority": "Mid",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["API Design"],
+        "domains": ["API Design"],
+        "evaluation_signals": [
+          "REST principles",
+          "clean route design",
+          "clear request/response schemas"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["api-design", "backend"]
+        }
+      }
+    },
+    {
+      "input": "I want a scrappy backend engineer who has built and shipped multiple small products.",
+      "output": {
+        "role": "Backend Engineer",
+        "seniority": "Mid",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Product Engineering"],
+        "domains": ["Startup Engineering"],
+        "evaluation_signals": [
+          "multiple small repositories",
+          "end-to-end ownership",
+          "shipping-focused projects"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["backend", "startup"]
+        }
+      }
+    },
+    {
+      "input": "Looking for someone deeply experienced with async Python and concurrency-heavy backend systems.",
+      "output": {
+        "role": "Backend Engineer",
+        "seniority": "Senior",
+        "primary_stack": ["Python"],
+        "secondary_stack": ["Async Programming", "Concurrency"],
+        "domains": ["High Performance Systems"],
+        "evaluation_signals": [
+          "async/await everywhere",
+          "event loop understanding",
+          "concurrency primitives",
+          "non-blocking IO"
+        ],
+        "github_search": {
+          "language": "Python",
+          "topics": ["async", "backend"]
+        }
+      }
+    }
+  ]
