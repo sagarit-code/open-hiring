@@ -11,7 +11,7 @@ Just **signal from code**.
 
 ---
 
-## ✨ What This Does (In Plain English)
+## ✨ What This Does 
 
 You give it a query like:
 
