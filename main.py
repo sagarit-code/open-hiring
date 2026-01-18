@@ -46,6 +46,14 @@ headers = {
     "User-Agent": "langgraph-agent"
 }
 
+lang_ext = {
+    "Python": ".py",
+    "JavaScript": ".js",
+    "TypeScript": ".ts",
+    "Go": ".go",
+}
+
+
 
 #nodes - function
 
@@ -158,86 +166,56 @@ def normalizing_repo(state:Agent):
 
 
 
+def fetch_blob_content(owner, repo, blob_sha):
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/blobs/{blob_sha}"
+    r = requests.get(url, headers=headers)
+    r.raise_for_status()
 
-
-def fetch_readme(owner: str, repo: str) -> str:
-    try:
-        url = f"https://api.github.com/repos/{owner}/{repo}/readme"
-        res = requests.get(url, headers=headers)
-        res.raise_for_status()
-        content = res.json().get("content", "")
-        if content:
-            return base64.b64decode(content).decode("utf-8", errors="ignore")
-    except Exception as e:
-        logging.warning("Failed to fetch README for %s/%s: %s", owner, repo, e)
-    return ""
+    data = r.json()
+    return base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
 
 
 
+def taking_files_from_repos(state:Agent) -> Agent:
+    url=[]
+    for each_url in state["enrich_repos"]:
+        url.append(each_url["link"])
+
+    listt_main_urls=[]
+    for each_word in url:
+        words = each_word.split("/")
+        owner = words[-2]
+        repo = words[-1]
+        joining = f"/{owner}/{repo}/"
+        main_code_directory_url = (
+            f"https://api.github.com/repos/{owner}/{repo}/git/trees/main?recursive=1")
+        listt_main_urls.append(main_code_directory_url)
+
+    final_lang_ext = lang_ext.get(
+    state["intent"]["github_search"]["language"])
+
+
+    matching_files=[]
+    for each in listt_main_urls:
+        response=requests.get(url=each,headers=headers)
+        results=response.json()
+
+        parts = each.split("/")
+        owner = parts[4]
+        repo = parts[5]
+
+        for e in results["tree"]:
+            if e["type"]=="blob" and e["path"].endswith(final_lang_ext):
+                matching_files.append(Document(
+                    page_content=fetch_blob_content(owner,repo,e["sha"]),
+                    metadata={
+                        "repo": f"{owner}/{repo}",
+                        "path": e["path"]
+                    }
+                ))
 
 
 
-def build_documents(state: Agent) -> Agent:
-    try:
-        splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)
-        docs = []
-        for repo in state.get("enrich_repos", []):
-            readme = fetch_readme(repo["user"], repo["repo"])
-            if not readme:
-                continue
-            chunks = splitter.split_text(readme)
-            for chunk in chunks:
-                docs.append(
-                    Document(
-                        page_content=chunk,
-                        metadata={
-                            "repo": repo["repo"],
-                            "owner": repo["user"],
-                            "stars": repo["stars"],
-                            "url": repo["link"]
-                        }
-                    )
-                )
-        state["documents"] = docs
-        logging.info("Total chunks: %d", len(docs))
-    except Exception as e:
-        logging.error("Build documents failed: %s", e)
-        state["documents"] = []
-    return state
-
-
-
-
-def semantic_rank(state: Agent) -> Agent:
-    try:
-        if not state.get("documents"):
-            state["ranked_repos"] = []
-            return state
-
-        vectordb = FAISS.from_documents(state["documents"], embedding)
-
-        intent_text = " ".join([
-            state["intent"].get("role", ""),
-            state["intent"].get("seniority", ""),
-            " ".join(state["intent"].get("primary_stack", [])),
-            " ".join(state["intent"].get("domains", []))
-        ])
-
-        results = vectordb.similarity_search(intent_text, k=10)
-        repo_scores = {}
-        for doc in results:
-            key = f"{doc.metadata['owner']}/{doc.metadata['repo']}"
-            repo_scores[key] = {
-                "repo": key,
-                "url": doc.metadata["url"],
-                "stars": doc.metadata["stars"],
-                "match_excerpt": doc.page_content[:300]
-            }
-        state["ranked_repos"] = list(repo_scores.values())
-    except Exception as e:
-        logging.error("Semantic rank failed: %s", e)
-        state["ranked_repos"] = []
-    return state
 
 
 #graph 
@@ -246,8 +224,7 @@ graph=StateGraph(Agent)
 graph.add_node("intent_classifier",intent_classifier)
 graph.add_node("finding_repos",finding_repos)
 graph.add_node("normalizing",normalizing_repo)
-graph.add_node("build_documents", build_documents)
-graph.add_node("semantic_rank", semantic_rank)
+
 
 graph.add_edge(START,"intent_classifier")
 graph.add_edge("intent_classifier","finding_repos")
@@ -264,3 +241,6 @@ result = app.invoke({
 print("\nTOP MATCHED REPOS:\n")
 for r in result.get("ranked_repos", []):
     print(r["url"], "->", r["stars"])
+
+
+#dont run this, we are currently working on it :)
