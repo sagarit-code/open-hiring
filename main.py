@@ -11,6 +11,7 @@ from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 import base64
 import logging
+from typing import Any
 #loading 
 load_dotenv()
 
@@ -23,6 +24,11 @@ class Agent(TypedDict):
     enrich_repos: list[dict]
     documents: list
     ranked_repos: list
+    matching_repo_file:list[Document]
+    chunked_repos:list[Document]
+    vector_store:Any
+    results:list[tuple[Document,float]]
+    final_results:list[tuple]
 
 embedding = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
@@ -53,6 +59,9 @@ lang_ext = {
     "Go": ".go",
 }
 
+embedding = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
 
 
 #nodes - function
@@ -215,32 +224,106 @@ def taking_files_from_repos(state:Agent) -> Agent:
                 ))
 
 
+    state["matching_repo_file"]=matching_files
+    return state
+    
+def chunking_repo(state:Agent) -> Agent:
+    splitter = RecursiveCharacterTextSplitter(
+    chunk_size=800,
+    chunk_overlap=150,
+    separators=[
+        "\nclass ",
+        "\ndef ",
+        "\nasync def ",
+        "\n\n",
+        "\n",
+        " "
+    ]
+)
 
+    ingesting_files=state["matching_repo_files"]
+    chunked_repos=[]
+    for each_files in ingesting_files:
+        chunks=splitter.split_text(each_files.page_content)
+        for each_chunk in chunks:
+            prompt=f'''
+You are a senior software engineer.
 
+Given the following code snippet, explain what it does in clear, concise terms.
+Focus on:
+- the purpose of the code
+- the main responsibility of this logic
+- how it fits into a larger system
 
+Do NOT restate the code line by line.
+Do NOT include implementation details unless necessary.
+Write 2–3 sentences maximum.
+
+Code:
+{each_chunk}'''
+            llm_response=model.invoke(prompt)
+            chunked_repos.append(Document(
+                page_content=llm_response.content,
+                metadata=each_files.metadata
+            ))
+    state["chunked_repos"]=chunked_repos
+    return state
+
+def semantic_search(state:Agent) -> Agent:
+    chunks=state["chunked_repos"]
+
+    if "vector_store" not in state:
+        state["vector_store"] = FAISS.from_documents(
+            state["chunked_repos"],
+            embedding
+        )
+    intent_text = " ".join([
+            state["intent"].get("role", ""),
+            state["intent"].get("seniority", ""),
+            " ".join(state["intent"].get("primary_stack", [])),
+            " ".join(state["intent"].get("domains", []))
+        ])
+    results=state["vector_store"].similarity_search_with_score(intent_text,k=10)
+    state["results"]=results
+    return state
+
+def refined_results(state:Agent) -> Agent:
+    h={}
+    resultss=state["results"]
+    for i in resultss:
+        if i[0].metadata["repo"] in h:
+            h[i[0].metadata["repo"]]+=1
+        else:
+            h[i[0].metadata["repo"]]=1
+    results_refined=list(h.items())
+    sorted_results_refined=sorted(results_refined,key=lambda x:x[1], reverse=True)
+    state["final_results"]=sorted_results_refined
+    return state
 #graph 
 
 graph=StateGraph(Agent)
 graph.add_node("intent_classifier",intent_classifier)
 graph.add_node("finding_repos",finding_repos)
 graph.add_node("normalizing",normalizing_repo)
-
+graph.add_node("files_ingest",taking_files_from_repos)
+graph.add_node("chunking",chunking_repo)
+graph.add_node("semantic",semantic_search)
+graph.add_node("ranking_system",refined_results)
 
 graph.add_edge(START,"intent_classifier")
 graph.add_edge("intent_classifier","finding_repos")
 graph.add_edge("finding_repos","normalizing")
-graph.add_edge("normalizing", "build_documents")
-graph.add_edge("build_documents", "semantic_rank")
-graph.add_edge("semantic_rank", END)
+graph.add_edge("normalizing", "files_ingest")
+graph.add_edge("files_ingest", "chunking")
+graph.add_edge("chunking", "semantic")
+graph.add_edge("semantic","ranking_system")
+graph.add_edge("ranking_system",END)
 
 app=graph.compile()
 result = app.invoke({
     "query_human": "find ai engineer mastered in langchain and langraph"
 })
 
-print("\nTOP MATCHED REPOS:\n")
-for r in result.get("ranked_repos", []):
-    print(r["url"], "->", r["stars"])
-
+print(result["final_results"])
 
 #dont run this, we are currently working on it :)
