@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenHiring - AI-Powered Developer Discovery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">👨‍💻</div>
+                <div>
+                    <h1>OpenHiring</h1>
+                    <p class="tagline">Semantic Talent Discovery</p>
+                </div>
+            </div>
+            <div class="nav-right">
+                <h2>AI-Powered Developer Discovery Platform</h2>
+                <p>Find top talent through code intelligence</p>
+            </div>
+            <div class="ai-badge">
+                <span class="badge-icon">⚡</span>
+                <span>AI Powered</span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Discover <span class="highlight typing-text" id="typingText">Real Developers</span><br>
+                From <span class="highlight">Real Code</span>
+            </h1>
+            <p class="hero-subtitle">
+                AI-powered semantic search that understands developer intent from GitHub repositories, not just keywords.
+            </p>
+
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="e.g., find ai engineer mastered in langchain and langgraph"
+                >
+                <button id="searchBtn" class="search-btn">
+                    <span class="btn-text">Discover Talent</span>
+                    <span class="btn-loader" style="display: none;">🔍 Searching...</span>
+                </button>
+            </div>
+
+            <div class="features">
+                <div class="feature feature-animate">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Intent Understanding</h3>
+                    <p>AI analyzes your requirements</p>
+                </div>
+                <div class="feature feature-animate">
+                    <div class="feature-icon">💻</div>
+                    <h3>Code Analysis</h3>
+                    <p>Deep repository scanning</p>
+                </div>
+                <div class="feature feature-animate">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Fast Results</h3>
+                    <p>Instant talent matching</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating particles animation -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </main>
+
+    <section id="results" class="results-section" style="display: none;">
+        <div class="results-container">
+            <h2 class="results-title">🎯 Top Matched Repositories</h2>
+            <div id="resultsGrid" class="results-grid"></div>
+        </div>
+    </section>
+
+    <div id="loadingModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="loader"></div>
+            <p class="loading-text">Analyzing GitHub repositories...</p>
+            <p class="loading-subtext">This may take a moment</p>
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

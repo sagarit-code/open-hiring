@@ -125,11 +125,29 @@ GROQ_API_KEY=your_groq_api_key
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Run it
+### 4️⃣ Install Frontend Server
 
 ```bash
-python main.py
+npm install -g http-server
 ```
+
+### 5️⃣ Run the Application
+
+Open two separate terminals:
+
+**Terminal 1 (Backend):**
+```bash
+uvicorn main:app --reload
+```
+(This will start the API server at `http://localhost:8000`)
+
+**Terminal 2 (Frontend):**
+```bash
+http-server frontend
+```
+(This will serve your frontend files, usually at `http://localhost:8080`)
+
+Then, open your web browser and navigate to the frontend URL (e.g., `http://localhost:8080`).
 
 Example query:
 
