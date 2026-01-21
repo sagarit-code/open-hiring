@@ -1,5 +1,5 @@
 
-# 🔍 Semantic GitHub Talent Discovery Engine
+# 🔍 Semantic GitHub Talent Discovery Engin
 
 > Find real developers from real code — not resumes, not keywords, not noise.
 
